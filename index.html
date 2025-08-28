@@ -181,8 +181,7 @@
         <div class="visualization">
             <div class="alignment-container">
                 <div class="place-value-display">
-                    <div class="number-line" id="numberDisplay"></div>
-                    <div class="place-value-line" id="placeValueDisplay"></div>
+                    <!-- Table will be inserted here by JavaScript -->
                 </div>
             </div>
         </div>
@@ -220,72 +219,50 @@
             // Calculate the answer
             const answer = Math.floor(inputNumber / placeValue);
             
-            // Convert numbers to strings without commas for alignment
-            const numberStr = inputNumber.toString();
-            const placeValueStr = placeValue.toString();
-            
             // Format with commas for display
             const formattedNumber = formatNumberWithCommas(inputNumber);
             const formattedPlaceValue = formatNumberWithCommas(placeValue);
             
-            // Create arrays of characters for perfect alignment
+            // Create arrays of characters for alignment
             const numberChars = formattedNumber.split('');
             const placeValueChars = formattedPlaceValue.split('');
-            
-            // Calculate padding needed
-            const totalLength = numberChars.length;
-            const placeValueLength = placeValueChars.length;
-            const paddingNeeded = totalLength - placeValueLength;
-            
-            // Find positions to highlight
-            const answerStr = answer.toString();
-            const highlightPositions = new Set();
             
             // Calculate where the "1" in the place value aligns
             const placeStartPos = numberChars.length - placeValueChars.length;
             
-            // The teaching method: highlight all characters from start up to where "1" aligns
-            // This shows what replaces the "1" to give the answer
-            for (let i = 0; i <= placeStartPos; i++) {
-                if (i < numberChars.length) {
-                    highlightPositions.add(i);
-                }
-            }
+            // Create table-based display for perfect alignment
+            let tableHTML = '<table style="border-collapse: collapse; font-family: \'Courier New\', monospace; font-size: 48px; margin: 0 auto;">';
             
-            // Build the number display with highlighting
-            let numberDisplay = '';
+            // Number row
+            tableHTML += '<tr>';
             for (let i = 0; i < numberChars.length; i++) {
-                if (highlightPositions.has(i)) {
-                    numberDisplay += `<span class="highlight-digit">${numberChars[i]}</span>`;
-                } else {
-                    numberDisplay += numberChars[i];
-                }
+                const isHighlighted = i <= placeStartPos;
+                const cellClass = isHighlighted ? 'style="color: #e74c3c; font-weight: bold; background-color: #fee;"' : '';
+                tableHTML += `<td ${cellClass} style="padding: 0 2px; text-align: center;">${numberChars[i]}</td>`;
             }
+            tableHTML += '</tr>';
             
-            // Build the place value display with proper alignment
-            let placeValueDisplay = '';
+            // Separator row
+            tableHTML += '<tr><td colspan="' + numberChars.length + '" style="border-bottom: 3px solid #333; height: 10px;"></td></tr>';
             
-            // We need to align the place value so its digits match up with the number's digits
-            // This means aligning commas as well
-            const numLen = numberChars.length;
-            const placeLen = placeValueChars.length;
-            
-            // Add spaces for alignment
-            for (let i = 0; i < numLen - placeLen; i++) {
-                placeValueDisplay += ' ';
+            // Place value row
+            tableHTML += '<tr>';
+            // Add empty cells for padding
+            for (let i = 0; i < placeStartPos; i++) {
+                tableHTML += '<td style="padding: 0 2px; text-align: center;"></td>';
             }
-            
-            // Add the place value with highlighted 1
-            placeValueDisplay += '<span class="highlight-digit">';
-            placeValueDisplay += placeValueChars[0];
-            placeValueDisplay += '</span>';
-            for (let i = 1; i < placeValueChars.length; i++) {
-                placeValueDisplay += placeValueChars[i];
+            // Add place value cells
+            for (let i = 0; i < placeValueChars.length; i++) {
+                const isOne = i === 0;
+                const cellClass = isOne ? 'style="color: #e74c3c; font-weight: bold; background-color: #fee;"' : 'style="color: #666;"';
+                tableHTML += `<td ${cellClass} style="padding: 0 2px; text-align: center;">${placeValueChars[i]}</td>`;
             }
+            tableHTML += '</tr>';
             
-            // Update the displays
-            document.getElementById('numberDisplay').innerHTML = numberDisplay;
-            document.getElementById('placeValueDisplay').innerHTML = placeValueDisplay;
+            tableHTML += '</table>';
+            
+            // Update the display
+            document.querySelector('.place-value-display').innerHTML = tableHTML;
             
             // Update the answer section
             document.getElementById('placeValueName').textContent = getPlaceValueName(placeValue);

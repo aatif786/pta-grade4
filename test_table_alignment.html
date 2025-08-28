@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Table Alignment</title>
+    <style>
+        .alignment-table {
+            border-collapse: collapse;
+            font-family: 'Courier New', monospace;
+            font-size: 48px;
+        }
+        .alignment-table td {
+            padding: 0;
+            text-align: center;
+            width: 40px;
+            height: 60px;
+        }
+        .number-row td {
+            border-bottom: 3px solid #333;
+        }
+        .highlight-cell {
+            color: #e74c3c;
+            font-weight: bold;
+            background-color: #fee;
+        }
+    </style>
+</head>
+<body>
+    <h2>Table-based alignment test</h2>
+    <table class="alignment-table">
+        <tr class="number-row">
+            <td class="highlight-cell">3</td>
+            <td class="highlight-cell">2</td>
+            <td class="highlight-cell">0</td>
+            <td>,</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+        </tr>
+        <tr class="place-value-row">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="highlight-cell">1</td>
+            <td>,</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+        </tr>
+    </table>
+    
+    <p>This ensures perfect character-by-character alignment!</p>
+</body>
+</html>
