@@ -170,7 +170,7 @@
         </div>
 
         <div class="instructions">
-            <strong>Parent/Teacher Note:</strong> The key is the <span class="right-aligned-note">RIGHT ALIGNMENT</span>! The place value number must be <span class="right-aligned-note">RIGHT-ALIGNED</span> under the original number (just like in addition/subtraction). The digit that appears above the "1" in the place value is the answer.
+            <strong>Parent/Teacher Note:</strong> The key is the <span class="right-aligned-note">RIGHT ALIGNMENT</span>! The place value number must be <span class="right-aligned-note">RIGHT-ALIGNED</span> under the original number (just like in addition/subtraction). The digits that appear above the "1" in the place value is the answer.
         </div>
 
         <div class="visualization">
@@ -257,11 +257,6 @@
             
             // Build the place value display with proper alignment
             let placeValueDisplay = '';
-            
-            // For monospace fonts, we need exact character matching
-            // Build a string that matches the exact length of the number display
-            const targetLength = numberChars.length;
-            const placeStartPos = targetLength - placeValueChars.length;
             
             // Add spaces for alignment
             for (let i = 0; i < placeStartPos; i++) {

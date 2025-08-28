@@ -4,7 +4,8 @@ const puppeteer = require('puppeteer');
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     
-    // Go to the page
+    // Go to the page with cache disabled
+    await page.setCacheEnabled(false);
     await page.goto('https://aatif786.github.io/pta-grade4/', { waitUntil: 'networkidle2' });
     
     // Set viewport
@@ -57,6 +58,9 @@ const puppeteer = require('puppeteer');
     
     // Take a screenshot
     await page.screenshot({ path: 'alignment_check.png', fullPage: false });
+    
+    // Also take a full page screenshot
+    await page.screenshot({ path: 'full_page.png', fullPage: true });
     
     // Get the actual text content to check alignment
     const visualization = await page.evaluate(() => {
