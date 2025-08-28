@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Right‑Aligned Place Value: “Replace 1 with 20”</title>
+<style>
+  :root {
+    --bg: #0b1020;
+    --card: #121a33;
+    --ink: #eaf0ff;
+    --muted: #9fb0ff;
+    --accent: #7cc8ff;
+    --good: #73e2a7;
+    --warn: #ffd166;
+  }
+  html, body { height: 100%; }
+  body {
+    margin: 0; display: grid; place-items: center; background: var(--bg);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    color: var(--ink);
+  }
+  .wrap {
+    width: min(800px, 92vw);
+    background: var(--card);
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.05);
+  }
+  h1 {
+    font-size: 22px;
+    margin: 0 0 16px 0;
+    letter-spacing: .3px;
+  }
+  p.lede {
+    margin: 0 0 18px 0;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .board {
+    margin: 12px auto 20px auto;
+    width: 100%;
+    background: rgba(255,255,255,.03);
+    border-radius: 14px;
+    padding: 18px 18px 10px 18px;
+    border: 1px solid rgba(255,255,255,.06);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    gap: 18px;
+    align-items: end;
+    margin-bottom: 10px;
+  }
+  .label {
+    color: var(--muted);
+    font-size: 13px;
+    letter-spacing: .2px;
+    text-transform: uppercase;
+  }
+  .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums; /* equal-width digits */
+    font-size: clamp(26px, 6.5vw, 48px);
+    letter-spacing: .5px;
+    white-space: pre;
+  }
+  .num .comma { opacity: .6; }
+  .unit {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .explain {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .controls { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+  button {
+    background: #24325a;
+    color: var(--ink);
+    border: 1px solid rgba(255,255,255,.12);
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: 600;
+    letter-spacing: .2px;
+    cursor: pointer;
+  }
+  button:hover { filter: brightness(1.15); }
+  .mini { padding: 6px 10px; font-size: 12px; }
+  .math {
+    display: grid; gap: 10px; margin-top: 12px;
+    grid-template-columns: 1fr;
+  }
+  .eq {
+    text-align: right;
+    font-size: clamp(20px, 5.5vw, 36px);
+    font-variant-numeric: tabular-nums;
+  }
+  .dim { opacity: .6; }
+  .pill {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.08);
+    border: 1px dashed rgba(255,255,255,.18);
+    font-size: 13px;
+    margin-left: 8px;
+    color: var(--muted);
+  }
+  .hi       { color: var(--accent); }
+  .hi-1     { color: #ffa5a5; }
+  .hi-20    { color: var(--good); font-weight: 800; }
+  .arrow { margin: 0 8px; opacity: .8; }
+  /* Animation states */
+  .step-1 .hi-1 { text-shadow: 0 0 14px rgba(255, 85, 85, .35); }
+  .step-2 .repl { opacity: 1; transform: translateY(0); }
+  .repl {
+    opacity: 0; transform: translateY(8px);
+    transition: all .5s ease;
+  }
+  .step-3 .final { opacity: 1; transform: translateY(0); }
+  .final {
+    opacity: 0; transform: translateY(8px);
+    transition: all .55s ease .1s;
+  }
+  .note {
+    font-size: 13px; color: #c3d1ff; margin-top: 6px;
+  }
+  .examples {
+    margin-top: 18px; border-top: 1px solid rgba(255,255,255,.08); padding-top: 14px;
+  }
+  .grid {
+    display: grid; gap: 8px;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+  }
+  .card {
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 12px; padding: 10px 12px;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap step-1" id="wrap">
+    <h1>Right‑Align the Unit, then “Replace 1 with 20”</h1>
+    <p class="lede">
+      This shows parents the exact technique: <strong>write the unit under the big number and right‑align it.</strong> 
+      Then visually replace the <span class="hi-1">1</span> in <em>10,000</em> with <span class="hi-20">20</span>—meaning “20 ten‑thousands make two‑hundred‑thousand.”
+    </p>
+
+    <div class="board">
+      <div class="row">
+        <div class="label">Number</div>
+        <div class="num" id="topNum">200,000</div>
+      </div>
+      <div class="row">
+        <div class="label">Unit (right‑aligned)</div>
+        <div class="num" id="botNum"><span class="hi-1">1</span>0,000</div>
+      </div>
+      <div class="math">
+        <div class="eq repl" id="replaceLine">
+          <span class="dim">Replace</span> <span class="hi-1">1</span> <span class="arrow">→</span> <span class="hi-20">20</span>
+          <span class="pill">because 20 × 10,000 = 200,000</span>
+        </div>
+        <div class="eq final" id="finalLine">
+          <span class="hi-20">20</span> ten‑thousands <span class="arrow">=</span> <strong>200,000</strong>
+        </div>
+      </div>
+      <p class="note">All digits are <em>right‑aligned</em> so place values line up exactly.</p>
+    </div>
+
+    <div class="controls">
+      <button id="play">Play</button>
+      <button class="mini" id="reset">Reset</button>
+    </div>
+
+    <div class="examples">
+      <div class="grid">
+        <div class="card">
+          <div class="label">Also works for “hundreds”</div>
+          <div class="eq">200,000 ÷ 100 = <strong>2,000</strong> hundreds</div>
+        </div>
+        <div class="card">
+          <div class="label">…and “tens”</div>
+          <div class="eq">120,000 ÷ 10 = <strong>12,000</strong> tens</div>
+        </div>
+        <div class="card">
+          <div class="label">…and “thousands”</div>
+          <div class="eq">320,000 ÷ 1,000 = <strong>320</strong> thousands</div>
+        </div>
+        <div class="card">
+          <div class="label">Parent script</div>
+          <div class="eq" style="font-size:16px; text-align:left;">
+            “Put the unit under the number, right‑align it, then replace the 1 with the count that makes the top number.”
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  const wrap = document.getElementById('wrap');
+  const play = document.getElementById('play');
+  const reset = document.getElementById('reset');
+  let step = 1;
+  function go() {
+    step++;
+    if (step === 2) wrap.className = 'wrap step-2';
+    else if (step === 3) wrap.className = 'wrap step-3';
+    else { step = 3; }
+  }
+  play.addEventListener('click', go);
+  reset.addEventListener('click', () => {
+    wrap.className = 'wrap step-1';
+    step = 1;
+  });
+</script>
+</body>
+</html>

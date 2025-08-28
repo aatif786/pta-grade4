@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PTA Grade 4</title>
+    <title>Place Value Teaching Tool - PTA Grade 4</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,7 +12,7 @@
             background-color: #f0f0f0;
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             background-color: white;
             padding: 30px;
@@ -22,18 +22,237 @@
         h1 {
             color: #333;
             text-align: center;
+            margin-bottom: 10px;
         }
-        p {
+        .subtitle {
+            text-align: center;
             color: #666;
-            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .explanation {
+            background-color: #e8f4f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .controls {
+            background-color: #f8f8f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: inline-block;
+            width: 150px;
+            font-weight: bold;
+        }
+        input[type="number"] {
+            width: 150px;
+            padding: 5px;
+            font-size: 16px;
+        }
+        select {
+            width: 160px;
+            padding: 5px;
+            font-size: 16px;
+        }
+        .visualization {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            margin: 30px 0;
+        }
+        .place-value-display {
+            font-family: 'Courier New', monospace;
+            text-align: right;
+            position: relative;
+        }
+        .number-line {
+            font-size: 48px;
+            letter-spacing: 15px;
+            margin-bottom: 10px;
+        }
+        .place-value-line {
+            font-size: 24px;
+            color: #666;
+            letter-spacing: 15px;
+            border-top: 3px solid #333;
+            padding-top: 10px;
+        }
+        .highlight-digit {
+            color: #e74c3c;
+            font-weight: bold;
+            background-color: #fee;
+            padding: 0 5px;
+            border-radius: 4px;
+        }
+        .answer-section {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 24px;
+        }
+        .answer-box {
+            background-color: #e8f8e8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .answer-number {
+            font-size: 36px;
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .instructions {
+            background-color: #fff9e6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #f39c12;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to PTA Grade 4</h1>
-        <p>This is the homepage for our Grade 4 PTA resources.</p>
-        <p>More content coming soon!</p>
+        <h1>Place Value Teaching Tool</h1>
+        <p class="subtitle">Visual Method for Understanding Place Values</p>
+
+        <div class="explanation">
+            <h2>How This Method Works:</h2>
+            <p>This technique helps students understand place value by visually aligning the digit with its place value underneath. When we ask "How many ten thousands are in 210,000?", we:</p>
+            <ol>
+                <li>Write the number (210,000)</li>
+                <li>Write the place value (10,000) directly underneath, right-aligned</li>
+                <li>The digit above the 1 in 10,000 shows us the answer!</li>
+            </ol>
+        </div>
+
+        <div class="controls">
+            <h3>Try It Yourself:</h3>
+            <div class="control-group">
+                <label for="inputNumber">Enter a number:</label>
+                <input type="number" id="inputNumber" value="210000" min="0" max="999999999">
+            </div>
+            <div class="control-group">
+                <label for="placeValue">Select place value:</label>
+                <select id="placeValue">
+                    <option value="1">Ones (1)</option>
+                    <option value="10">Tens (10)</option>
+                    <option value="100">Hundreds (100)</option>
+                    <option value="1000">Thousands (1,000)</option>
+                    <option value="10000" selected>Ten Thousands (10,000)</option>
+                    <option value="100000">Hundred Thousands (100,000)</option>
+                    <option value="1000000">Millions (1,000,000)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <strong>Parent/Teacher Note:</strong> The key is the visual alignment! The place value number must be right-aligned under the original number. The digit that appears above the "1" in the place value is the answer.
+        </div>
+
+        <div class="visualization">
+            <div class="place-value-display">
+                <div class="number-line" id="numberDisplay"></div>
+                <div class="place-value-line" id="placeValueDisplay"></div>
+            </div>
+        </div>
+
+        <div class="answer-section">
+            <div class="answer-box">
+                <p>How many <span id="placeValueName">ten thousands</span> are in <span id="numberName">210,000</span>?</p>
+                <p class="answer-number">Answer: <span id="answer">21</span> <span id="placeValueNameAnswer">ten thousands</span></p>
+            </div>
+        </div>
     </div>
+
+    <script>
+        function formatNumberWithCommas(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function getPlaceValueName(value) {
+            const names = {
+                1: "ones",
+                10: "tens",
+                100: "hundreds",
+                1000: "thousands",
+                10000: "ten thousands",
+                100000: "hundred thousands",
+                1000000: "millions"
+            };
+            return names[value] || value.toString();
+        }
+
+        function updateVisualization() {
+            const inputNumber = parseInt(document.getElementById('inputNumber').value) || 0;
+            const placeValue = parseInt(document.getElementById('placeValue').value);
+            
+            // Format numbers for display
+            const formattedNumber = formatNumberWithCommas(inputNumber);
+            const formattedPlaceValue = formatNumberWithCommas(placeValue);
+            
+            // Calculate the answer
+            const answer = Math.floor(inputNumber / placeValue);
+            
+            // Create the visual alignment
+            const numberStr = inputNumber.toString();
+            const placeValueStr = placeValue.toString();
+            
+            // Determine which digit to highlight
+            const digitPosition = numberStr.length - placeValueStr.length;
+            
+            // Build the display with highlighting
+            let numberDisplay = '';
+            for (let i = 0; i < numberStr.length; i++) {
+                if (i === digitPosition) {
+                    numberDisplay += `<span class="highlight-digit">${numberStr[i]}</span>`;
+                } else {
+                    numberDisplay += numberStr[i];
+                }
+            }
+            
+            // Add commas to the display
+            numberDisplay = numberDisplay.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            
+            // Create place value display with proper spacing
+            let placeValueDisplay = '';
+            const spacesNeeded = numberStr.length - placeValueStr.length;
+            
+            // Add spaces for alignment
+            for (let i = 0; i < spacesNeeded; i++) {
+                placeValueDisplay += '&nbsp;';
+            }
+            
+            // Add the place value with highlighted 1
+            placeValueDisplay += '<span class="highlight-digit">1</span>';
+            for (let i = 1; i < placeValueStr.length; i++) {
+                placeValueDisplay += placeValueStr[i];
+            }
+            
+            // Add commas to place value display
+            placeValueDisplay = placeValueDisplay.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            
+            // Update the displays
+            document.getElementById('numberDisplay').innerHTML = numberDisplay;
+            document.getElementById('placeValueDisplay').innerHTML = placeValueDisplay;
+            
+            // Update the answer section
+            document.getElementById('placeValueName').textContent = getPlaceValueName(placeValue);
+            document.getElementById('numberName').textContent = formattedNumber;
+            document.getElementById('answer').textContent = answer;
+            document.getElementById('placeValueNameAnswer').textContent = getPlaceValueName(placeValue);
+        }
+
+        // Add event listeners
+        document.getElementById('inputNumber').addEventListener('input', updateVisualization);
+        document.getElementById('placeValue').addEventListener('change', updateVisualization);
+
+        // Initial update
+        updateVisualization();
+    </script>
 </body>
 </html>
