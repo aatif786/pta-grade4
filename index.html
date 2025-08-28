@@ -69,6 +69,11 @@
         .place-value-display {
             font-family: 'Courier New', monospace;
             position: relative;
+            display: inline-block;
+        }
+        .alignment-container {
+            display: inline-block;
+            text-align: right;
         }
         .number-line {
             font-size: 48px;
@@ -174,9 +179,11 @@
         </div>
 
         <div class="visualization">
-            <div class="place-value-display">
-                <div class="number-line" id="numberDisplay"></div>
-                <div class="place-value-line" id="placeValueDisplay"></div>
+            <div class="alignment-container">
+                <div class="place-value-display">
+                    <div class="number-line" id="numberDisplay"></div>
+                    <div class="place-value-line" id="placeValueDisplay"></div>
+                </div>
             </div>
         </div>
 
@@ -258,9 +265,13 @@
             // Build the place value display with proper alignment
             let placeValueDisplay = '';
             
+            // We need to align the place value so its digits match up with the number's digits
+            // This means aligning commas as well
+            const numLen = numberChars.length;
+            const placeLen = placeValueChars.length;
+            
             // Add spaces for alignment
-            for (let i = 0; i < placeStartPos; i++) {
-                // Match whatever is in the number at this position (space or nothing)
+            for (let i = 0; i < numLen - placeLen; i++) {
                 placeValueDisplay += ' ';
             }
             

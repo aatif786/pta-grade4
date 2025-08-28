@@ -32,14 +32,14 @@ const puppeteer = require('puppeteer');
     // Force a page reload to ensure we have the latest code
     await page.reload({ waitUntil: 'networkidle2' });
     
-    // Change input to 2500
+    // Change input to 320000
     await page.evaluate(() => {
-        document.getElementById('inputNumber').value = '2500';
+        document.getElementById('inputNumber').value = '320000';
     });
     
-    // Change place value to 10
+    // Change place value to 1000
     await page.evaluate(() => {
-        document.getElementById('placeValue').value = '10';
+        document.getElementById('placeValue').value = '1000';
     });
     
     // Trigger the update again
