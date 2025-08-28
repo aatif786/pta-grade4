@@ -228,21 +228,16 @@
             const placeValueLength = placeValueChars.length;
             const paddingNeeded = totalLength - placeValueLength;
             
-            // Find positions to highlight based on answer
+            // Find positions to highlight
             const answerStr = answer.toString();
             const highlightPositions = new Set();
             
-            // We need to highlight as many digits as the answer has
-            // Starting from the leftmost position in the formatted number
-            let digitsToHighlight = answerStr.length;
-            let currentPos = 0;
-            
-            while (digitsToHighlight > 0 && currentPos < numberChars.length) {
-                if (numberChars[currentPos] !== ',') {
-                    highlightPositions.add(currentPos);
-                    digitsToHighlight--;
+            // The teaching method: highlight all digits from start up to where "1" aligns
+            // This shows what replaces the "1" to give the answer
+            for (let i = 0; i <= paddingNeeded; i++) {
+                if (i < numberChars.length) {
+                    highlightPositions.add(i);
                 }
-                currentPos++;
             }
             
             // Build the number display with highlighting
