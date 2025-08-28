@@ -232,21 +232,19 @@
             const answerStr = answer.toString();
             const highlightPositions = new Set();
             
-            // Find where to start highlighting (counting digits from right)
-            let digitCount = 0;
-            let startHighlight = false;
-            let highlightCount = 0;
+            // We need to highlight digits that align with the "1" in place value
+            // Count positions from the right, including commas
+            const placeValueStartPos = paddingNeeded;
             
-            for (let i = numberChars.length - 1; i >= 0; i--) {
-                if (numberChars[i] !== ',') {
-                    if (digitCount === placeValueStr.length - 1) {
-                        startHighlight = true;
+            // The answer digits should be highlighted starting from this position
+            let answerLength = answerStr.length;
+            for (let i = 0; i < answerLength; i++) {
+                if (placeValueStartPos + i < numberChars.length) {
+                    highlightPositions.add(placeValueStartPos + i);
+                    // Skip comma if we encounter one
+                    if (numberChars[placeValueStartPos + i] === ',') {
+                        answerLength++; // Extend to include next digit
                     }
-                    if (startHighlight && highlightCount < answerStr.length) {
-                        highlightPositions.add(i);
-                        highlightCount++;
-                    }
-                    digitCount++;
                 }
             }
             
