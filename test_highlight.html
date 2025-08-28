@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Highlighting Logic</title>
+</head>
+<body>
+    <div id="output"></div>
+    <script>
+        function testHighlighting() {
+            const inputNumber = 200000;
+            const placeValue = 100;
+            const answer = Math.floor(inputNumber / placeValue); // 2000
+            
+            const formattedNumber = inputNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            const numberChars = formattedNumber.split(''); // ['2','0','0',',','0','0','0']
+            
+            const answerStr = answer.toString(); // "2000"
+            const rawNumberStr = inputNumber.toString(); // "200000"
+            
+            console.log('Formatted:', numberChars);
+            console.log('Answer:', answerStr, 'Length:', answerStr.length);
+            
+            // The correct positions to highlight for "2000" in "200,000" are indices 0,1,2,4
+            // (skipping the comma at index 3)
+            
+            const highlightPositions = new Set();
+            let digitsFound = 0;
+            for (let i = 0; i < numberChars.length && digitsFound < answerStr.length; i++) {
+                if (numberChars[i] !== ',') {
+                    highlightPositions.add(i);
+                    digitsFound++;
+                }
+            }
+            
+            console.log('Positions to highlight:', Array.from(highlightPositions));
+            
+            // Build display
+            let display = '';
+            for (let i = 0; i < numberChars.length; i++) {
+                if (highlightPositions.has(i)) {
+                    display += `<span style="color:red">${numberChars[i]}</span>`;
+                } else {
+                    display += numberChars[i];
+                }
+            }
+            
+            document.getElementById('output').innerHTML = display;
+        }
+        
+        testHighlighting();
+    </script>
+</body>
+</html>

@@ -228,24 +228,21 @@
             const placeValueLength = placeValueChars.length;
             const paddingNeeded = totalLength - placeValueLength;
             
-            // Find positions to highlight based on answer length
+            // Find positions to highlight based on answer
             const answerStr = answer.toString();
             const highlightPositions = new Set();
             
-            // We need to highlight digits that align with the "1" in place value
-            // Count positions from the right, including commas
-            const placeValueStartPos = paddingNeeded;
+            // We need to highlight as many digits as the answer has
+            // Starting from the leftmost position in the formatted number
+            let digitsToHighlight = answerStr.length;
+            let currentPos = 0;
             
-            // The answer digits should be highlighted starting from this position
-            let answerLength = answerStr.length;
-            for (let i = 0; i < answerLength; i++) {
-                if (placeValueStartPos + i < numberChars.length) {
-                    highlightPositions.add(placeValueStartPos + i);
-                    // Skip comma if we encounter one
-                    if (numberChars[placeValueStartPos + i] === ',') {
-                        answerLength++; // Extend to include next digit
-                    }
+            while (digitsToHighlight > 0 && currentPos < numberChars.length) {
+                if (numberChars[currentPos] !== ',') {
+                    highlightPositions.add(currentPos);
+                    digitsToHighlight--;
                 }
+                currentPos++;
             }
             
             // Build the number display with highlighting
