@@ -68,20 +68,21 @@
         }
         .place-value-display {
             font-family: 'Courier New', monospace;
-            text-align: right;
             position: relative;
         }
         .number-line {
             font-size: 48px;
-            letter-spacing: 15px;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+            white-space: pre;
+            font-family: 'Courier New', monospace;
         }
         .place-value-line {
-            font-size: 24px;
+            font-size: 48px;
             color: #666;
-            letter-spacing: 15px;
             border-top: 3px solid #333;
             padding-top: 10px;
+            white-space: pre;
+            font-family: 'Courier New', monospace;
         }
         .highlight-digit {
             color: #e74c3c;
@@ -113,6 +114,20 @@
             margin-bottom: 20px;
             border-left: 4px solid #f39c12;
         }
+        .right-aligned-note {
+            color: #e74c3c;
+            font-weight: bold;
+            background-color: #ffe6e6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+        .alignment-arrow {
+            color: #e74c3c;
+            font-size: 24px;
+            margin: 0 10px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -125,9 +140,10 @@
             <p>This technique helps students understand place value by visually aligning the digit with its place value underneath. When we ask "How many ten thousands are in 210,000?", we:</p>
             <ol>
                 <li>Write the number (210,000)</li>
-                <li>Write the place value (10,000) directly underneath, right-aligned</li>
+                <li>Write the place value (10,000) directly underneath, <span class="right-aligned-note">RIGHT-ALIGNED</span></li>
                 <li>The digit above the 1 in 10,000 shows us the answer!</li>
             </ol>
+            <p><strong>Key Point:</strong> The numbers MUST be <span class="right-aligned-note">RIGHT-ALIGNED</span> <span class="alignment-arrow">→</span> just like when you do addition or subtraction!</p>
         </div>
 
         <div class="controls">
@@ -151,7 +167,7 @@
         </div>
 
         <div class="instructions">
-            <strong>Parent/Teacher Note:</strong> The key is the visual alignment! The place value number must be right-aligned under the original number. The digit that appears above the "1" in the place value is the answer.
+            <strong>Parent/Teacher Note:</strong> The key is the <span class="right-aligned-note">RIGHT ALIGNMENT</span>! The place value number must be <span class="right-aligned-note">RIGHT-ALIGNED</span> under the original number (just like in addition/subtraction). The digit that appears above the "1" in the place value is the answer.
         </div>
 
         <div class="visualization">
@@ -191,50 +207,65 @@
             const inputNumber = parseInt(document.getElementById('inputNumber').value) || 0;
             const placeValue = parseInt(document.getElementById('placeValue').value);
             
-            // Format numbers for display
-            const formattedNumber = formatNumberWithCommas(inputNumber);
-            const formattedPlaceValue = formatNumberWithCommas(placeValue);
-            
             // Calculate the answer
             const answer = Math.floor(inputNumber / placeValue);
             
-            // Create the visual alignment
+            // Convert numbers to strings without commas for alignment
             const numberStr = inputNumber.toString();
             const placeValueStr = placeValue.toString();
             
-            // Determine which digit to highlight
-            const digitPosition = numberStr.length - placeValueStr.length;
+            // Format with commas for display
+            const formattedNumber = formatNumberWithCommas(inputNumber);
+            const formattedPlaceValue = formatNumberWithCommas(placeValue);
             
-            // Build the display with highlighting
-            let numberDisplay = '';
-            for (let i = 0; i < numberStr.length; i++) {
-                if (i === digitPosition) {
-                    numberDisplay += `<span class="highlight-digit">${numberStr[i]}</span>`;
-                } else {
-                    numberDisplay += numberStr[i];
+            // Create arrays of characters for perfect alignment
+            const numberChars = formattedNumber.split('');
+            const placeValueChars = formattedPlaceValue.split('');
+            
+            // Calculate padding needed
+            const totalLength = numberChars.length;
+            const placeValueLength = placeValueChars.length;
+            const paddingNeeded = totalLength - placeValueLength;
+            
+            // Find position of the digit to highlight in the formatted number
+            // Count from right, skipping commas
+            let targetPos = -1;
+            let digitCount = 0;
+            for (let i = numberChars.length - 1; i >= 0; i--) {
+                if (numberChars[i] !== ',') {
+                    if (digitCount === placeValueStr.length - 1) {
+                        targetPos = i;
+                        break;
+                    }
+                    digitCount++;
                 }
             }
             
-            // Add commas to the display
-            numberDisplay = numberDisplay.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            // Build the number display with highlighting
+            let numberDisplay = '';
+            for (let i = 0; i < numberChars.length; i++) {
+                if (i === targetPos) {
+                    numberDisplay += `<span class="highlight-digit">${numberChars[i]}</span>`;
+                } else {
+                    numberDisplay += numberChars[i];
+                }
+            }
             
-            // Create place value display with proper spacing
+            // Build the place value display with proper alignment
             let placeValueDisplay = '';
-            const spacesNeeded = numberStr.length - placeValueStr.length;
             
             // Add spaces for alignment
-            for (let i = 0; i < spacesNeeded; i++) {
-                placeValueDisplay += '&nbsp;';
+            for (let i = 0; i < paddingNeeded; i++) {
+                placeValueDisplay += ' ';
             }
             
             // Add the place value with highlighted 1
-            placeValueDisplay += '<span class="highlight-digit">1</span>';
-            for (let i = 1; i < placeValueStr.length; i++) {
-                placeValueDisplay += placeValueStr[i];
+            placeValueDisplay += '<span class="highlight-digit">';
+            placeValueDisplay += placeValueChars[0];
+            placeValueDisplay += '</span>';
+            for (let i = 1; i < placeValueChars.length; i++) {
+                placeValueDisplay += placeValueChars[i];
             }
-            
-            // Add commas to place value display
-            placeValueDisplay = placeValueDisplay.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             
             // Update the displays
             document.getElementById('numberDisplay').innerHTML = numberDisplay;
