@@ -141,9 +141,10 @@
             <ol>
                 <li>Write the number (210,000)</li>
                 <li>Write the place value (10,000) directly underneath, <span class="right-aligned-note">RIGHT-ALIGNED</span></li>
-                <li>The digit above the 1 in 10,000 shows us the answer!</li>
+                <li>Look at what appears above the "1" in 10,000 → You see "21"!</li>
+                <li>The "1" in 10,000 is replaced by "21" from above - that's your answer!</li>
             </ol>
-            <p><strong>Key Point:</strong> The numbers MUST be <span class="right-aligned-note">RIGHT-ALIGNED</span> <span class="alignment-arrow">→</span> just like when you do addition or subtraction!</p>
+            <p><strong>The Visual Magic:</strong> When properly <span class="right-aligned-note">RIGHT-ALIGNED</span>, you literally see the "1" being replaced by "21" <span class="alignment-arrow">→</span> showing there are 21 ten thousands!</p>
         </div>
 
         <div class="controls">
@@ -227,15 +228,23 @@
             const placeValueLength = placeValueChars.length;
             const paddingNeeded = totalLength - placeValueLength;
             
-            // Find position of the digit to highlight in the formatted number
-            // Count from right, skipping commas
-            let targetPos = -1;
+            // Find positions to highlight based on answer length
+            const answerStr = answer.toString();
+            const highlightPositions = new Set();
+            
+            // Find where to start highlighting (counting digits from right)
             let digitCount = 0;
+            let startHighlight = false;
+            let highlightCount = 0;
+            
             for (let i = numberChars.length - 1; i >= 0; i--) {
                 if (numberChars[i] !== ',') {
                     if (digitCount === placeValueStr.length - 1) {
-                        targetPos = i;
-                        break;
+                        startHighlight = true;
+                    }
+                    if (startHighlight && highlightCount < answerStr.length) {
+                        highlightPositions.add(i);
+                        highlightCount++;
                     }
                     digitCount++;
                 }
@@ -244,7 +253,7 @@
             // Build the number display with highlighting
             let numberDisplay = '';
             for (let i = 0; i < numberChars.length; i++) {
-                if (i === targetPos) {
+                if (highlightPositions.has(i)) {
                     numberDisplay += `<span class="highlight-digit">${numberChars[i]}</span>`;
                 } else {
                     numberDisplay += numberChars[i];
