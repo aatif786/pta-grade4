@@ -75,6 +75,7 @@
             margin-bottom: 5px;
             white-space: pre;
             font-family: 'Courier New', monospace;
+            letter-spacing: 0;
         }
         .place-value-line {
             font-size: 48px;
@@ -83,6 +84,7 @@
             padding-top: 10px;
             white-space: pre;
             font-family: 'Courier New', monospace;
+            letter-spacing: 0;
         }
         .highlight-digit {
             color: #e74c3c;
@@ -232,9 +234,12 @@
             const answerStr = answer.toString();
             const highlightPositions = new Set();
             
-            // The teaching method: highlight all digits from start up to where "1" aligns
+            // Calculate where the "1" in the place value aligns
+            const placeStartPos = numberChars.length - placeValueChars.length;
+            
+            // The teaching method: highlight all characters from start up to where "1" aligns
             // This shows what replaces the "1" to give the answer
-            for (let i = 0; i <= paddingNeeded; i++) {
+            for (let i = 0; i <= placeStartPos; i++) {
                 if (i < numberChars.length) {
                     highlightPositions.add(i);
                 }
@@ -253,8 +258,14 @@
             // Build the place value display with proper alignment
             let placeValueDisplay = '';
             
+            // For monospace fonts, we need exact character matching
+            // Build a string that matches the exact length of the number display
+            const targetLength = numberChars.length;
+            const placeStartPos = targetLength - placeValueChars.length;
+            
             // Add spaces for alignment
-            for (let i = 0; i < paddingNeeded; i++) {
+            for (let i = 0; i < placeStartPos; i++) {
+                // Match whatever is in the number at this position (space or nothing)
                 placeValueDisplay += ' ';
             }
             
